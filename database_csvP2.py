@@ -15,33 +15,6 @@ if st.session_state["logged_in"]:
 else:
     st.sidebar.info("Please log in to continue.")
 
-# ------------------------------------------------------------------
-#  AUTHORIZATION CHECK – ONLY ALLOW SPECIFIC USER ID
-# ------------------------------------------------------------------
-ALLOWED_USER_ID = "d7933cee-fac7-48c7-a35a-f6ac2dbc8f85"
-
-# Streamlit Cloud (and newer Streamlit versions) injects the user info
-# via environment variables when "Email authentication" is enabled in app settings
-def get_current_user_id() -> str | None:
-    # Method 1: Streamlit Cloud with authentication turned on
-    user_info = st.experimental_user
-    if user_info and "user_id" in user_info:
-        return user_info["user_id"]
-
-    # Method 2: Fallback for some older deployments / custom auth
-    email = st.experimental_user.get("email")
-    if email:
-        # Create a deterministic ID from the email (same way Streamlit does internally)
-        return hashlib.sha256(email.lower().encode()).hexdigest()
-
-    return None
-
-current_user_id = get_current_user_id()
-
-if current_user_id != ALLOWED_USER_ID:
-    st.error("🚫 Access denied")
-    st.info("This page is private and only visible to the authorized user.")
-    st.stop()  # Stops execution – nothing below this will be shown
 
 st.set_page_config(page_title="Workout Recorder", layout="centered")
 
